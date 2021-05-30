@@ -1,0 +1,194 @@
+import netmiko
+from netmiko import ConnectHandler
+import time
+#                                 WELLCOME !!!! TO  MY PROJECT !!!
+
+#devices = '''
+
+#R1 oR ip address
+
+#R2
+
+#R3
+
+#R4
+
+#R5
+
+#R6
+
+#R7
+
+#R8
+
+#'''.strip().splitlines()
+
+
+#here all dic for all router information ::::::
+
+
+router1 ={
+
+    "device_type":"cisco_ios",
+
+    "username":"admin",
+    "ip":"192.168.230.155",
+    "password":"admin",
+    "secret":"admin",
+
+ }
+
+router2 ={
+        "device_type":"cisco_ios",
+
+        "username":"admin",
+        "ip":"192.168.230.156",
+
+        "password":"admin",
+
+        "secret":"admin",
+
+
+
+ }
+
+
+
+router3 ={
+
+
+        "device_type":"cisco_ios",
+
+        "username":"admin",
+
+        "ip":"192.168.230.152",
+
+        "password":"admin",
+
+        "secret":"admin",
+
+
+
+ }
+
+
+router4 ={
+
+        "device_type":"cisco_ios",
+
+        "username":"admin",
+
+        "ip":"192.168.230.151",
+
+        "password":"admin",
+        
+        "secret":"admin",
+
+ }
+
+
+
+router5 ={
+
+        "device_type":"cisco_ios",
+
+        "username":"admin",
+
+        "ip":"192.168.230.150",
+
+        "password":"admin",
+        "secret":"admin",
+
+
+  }
+
+router6 ={
+
+        "device_type":"cisco_ios",
+
+        "username":"admin",
+        "ip":"192.168.230.149",
+
+        "password":"admin",
+        "secret":"admin",
+
+}
+
+router7 ={
+
+        "device_type":"cisco_ios",
+
+        "username":"admin",
+        "ip":"192.168.230.154",
+
+        "password":"admin",
+        "secret":"admin",
+
+}
+
+router8 ={
+
+        "device_type":"cisco_ios",
+
+        "username":"admin",
+        "ip":"192.168.230.153",
+
+        "password":"admin",
+        "secret":"admin",
+
+}
+#Here is the config that is standard among all routers.
+
+devices=[router1,router4,router5,router6,router7,router8]
+
+verbose = True
+
+
+for device in devices:
+
+        print('')
+
+        print('##############################******########################################')
+
+        print('')
+
+        print(" Connecting to Device: " + device["ip"])
+
+                                        
+        net_connect = ConnectHandler(**device)
+
+        prompter = net_connect.find_prompt()
+
+        if '>' in prompter:
+                net_connect.enable()
+        output = net_connect.send_command('show run | sec ospf')
+        ospf_commands = ['router ospf 1', 'net 0.0.0.0 255.255.255.255 area 0',]
+
+        if not 'router ospf' in output:
+                print('OSPF is not enabled on device: ' + device["ip"])
+                
+                answer = input('Would you like you enable default OSPF settings on: ' + device ["ip"]+ ' <y/n> ')
+                
+                if answer == 'y':
+                
+                        output = net_connect.send_config_set(ospf_commands)
+                        time.sleep(2)
+                        print(output)
+                        
+                        print('OSPF is now configured!')     
+
+                else:
+                        print('No OSPF configurations have been made!')
+
+
+
+        
+
+
+        else:
+
+            print("OSPF is already configured on device: " + device["ip"])
+
+print('***************************************************************')
+
+print('!!!!!!!!!!!!!!!!!!!!! SCRIPT OF OSPF IS  COMPLETE !!!!!!!!!!!!!!!!!!!!!!!')
